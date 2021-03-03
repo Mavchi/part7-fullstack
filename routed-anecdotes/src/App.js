@@ -87,6 +87,11 @@ const CreateNew = (props) => {
     author.reset()
     info.reset()
   }
+
+  const field_for_input = (input) => {
+    const {reset, ...rest} = input
+    return rest
+  }
   
   return (
     <div>
@@ -94,15 +99,15 @@ const CreateNew = (props) => {
       <form>
         <div>
           content
-          <input {...content} />
+          <input {...field_for_input(content)} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...field_for_input(author)} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...field_for_input(info)} />
         </div>
         <button onClick={handleSubmit}>create</button>
         <button onClick={reset_field}>reset</button>
