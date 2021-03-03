@@ -76,16 +76,22 @@ const CreateNew = (props) => {
     e.preventDefault()
     props.addNew({
       content: content.value,
-      author: content.author,
-      info: content.info,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
+  }
+
+  const reset_field = () => {
+    content.reset()
+    author.reset()
+    info.reset()
   }
   
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
+      <form>
         <div>
           content
           <input {...content} />
@@ -98,7 +104,8 @@ const CreateNew = (props) => {
           url for more info
           <input {...info} />
         </div>
-        <button>create</button>
+        <button onClick={handleSubmit}>create</button>
+        <button onClick={reset_field}>reset</button>
       </form>
     </div>
   )
