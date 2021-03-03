@@ -3,7 +3,7 @@ import {
   Switch,
   Route,
   Link,
-  Redirect,
+  useHistory,
   useRouteMatch
 } from 'react-router-dom'
 
@@ -105,6 +105,8 @@ const CreateNew = (props) => {
 }
 
 const App = () => {
+  let history = useHistory()
+
   const [anecdotes, setAnecdotes] = useState([
     {
       content: 'If it hurts, do it more often',
@@ -127,6 +129,10 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     setAnecdotes(anecdotes.concat(anecdote))
+
+    setNotification(`a new anecdote ${anecdote.content} created!`)
+    setTimeout(() => setNotification(''), 10000)
+    history.push('/')
   }
 
   const anecdoteById = (id) =>
@@ -153,6 +159,7 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      {notification}
 
       <Switch>
         <Route path='/anecdotes/:id'>
