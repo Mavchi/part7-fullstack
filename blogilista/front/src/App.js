@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Switch, Route, useRouteMatch } from "react-router-dom";
+import { Switch, Route, useRouteMatch, Link } from "react-router-dom";
 
 import Blog from "./components/Blog";
 import Toggable from "./components/Togglable";
@@ -152,11 +152,14 @@ const App = () => {
 
   return (
     <main>
-      <h2>blogs</h2>
       <Notification message={errorMessage} />
-      <p>
+      <nav>
+        <Link to="/">blogs </Link>
+        <Link to="/users/">users </Link>
         {user.name} logged in <button onClick={logOut}>logout</button>
-      </p>
+      </nav>
+
+      <h2>blogs</h2>
       <Switch>
         <Route path="/blogs/:id">
           <BlogPage blog={selected_blog} />
