@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Switch,
-  Route
-} from 'react-router-dom'
+import { Switch, Route, useRouteMatch } from "react-router-dom";
 
 import Blog from "./components/Blog";
 import Toggable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
-import Users from './components/Users'
+import Users from "./components/Users";
+import BlogPage from './components/BlogPage'
 
 import {
   initializeBlogs,
@@ -40,6 +38,11 @@ const App = () => {
     dispatch(initializeBlogs());
     dispatch(initializeUser());
   }, [dispatch]);
+
+
+  const match = useRouteMatch("/blogs/:id");
+  let selected_blog = match ? blogs.find(blog => blog.id === match.params.id) : null;
+  //console.log(selected_blog)
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -148,34 +151,38 @@ const App = () => {
   });
 
   return (
-    <Switch>
-      <Route path="/users">
-        <Users />
-      </Route>
-      <Route path="/">
-        <div>
-          <h2>blogs</h2>
-          <Notification message={errorMessage} />
-          <p>
-            {user.name} logged in <button onClick={logOut}>logout</button>
-          </p>
+    <main>
+      <h2>blogs</h2>
+      <Notification message={errorMessage} />
+      <p>
+        {user.name} logged in <button onClick={logOut}>logout</button>
+      </p>
+      <Switch>
+        <Route path="/blogs/:id">
+          <BlogPage blog={selected_blog} />
+        </Route>
+        <Route path="/users">
+          <Users />
+        </Route>
+        <Route path="/">
+          <div>
+            {blogForm()}
 
-          {blogForm()}
-
-          <div className="content-blogs">
-            {sorted_blogs.map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                user={user}
-                handleLike={handleBlogLike}
-                handleRemoveBlog={handleRemoveBlog}
-              />
-            ))}
+            <div className="content-blogs">
+              {sorted_blogs.map((blog) => (
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  user={user}
+                  handleLike={handleBlogLike}
+                  handleRemoveBlog={handleRemoveBlog}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </Route>
-    </Switch>
+        </Route>
+      </Switch>
+    </main>
   );
 };
 
