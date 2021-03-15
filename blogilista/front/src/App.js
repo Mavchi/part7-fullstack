@@ -6,9 +6,7 @@ import Toggable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 
 import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
-
-import loginServices from './services/login'
-import blogService from './services/blogs' 
+import { initializeUser, userLogin, userLogOut } from './reducers/userReducer'
 
 const Notification = ({ message }) => {
   if (message === null) {
@@ -24,41 +22,29 @@ const Notification = ({ message }) => {
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
-  const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const blogs = useSelector(state => state.blogs)
+  let user = useSelector(state => state.user)
+  console.log('user',user)
+  console.log('blogs',blogs)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(initializeUser());
   }, [dispatch])
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogsPart5User')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
 
-  const handleLogin = async (event) => {
+  const handleLogin = (event) => {
     event.preventDefault()
-
-    try {
-      const user = await loginServices.login({ username, password })
-
-      window.localStorage.setItem(
-        'loggedBlogsPart5User', JSON.stringify(user)
-      )
-      blogService.setToken(user.token)
-      setUser(user)
+    dispatch(userLogin({ username, password }))
+    if (user) {
       setUsername('')
       setPassword('')
-    } catch (error) {
+    } else {
       setErrorMessage({ type: 'error', txt: 'wrong username or password' })
       setTimeout(() => {
         setErrorMessage(null)
@@ -67,8 +53,7 @@ const App = () => {
   }
 
   const logOut = () => {
-    window.localStorage.removeItem('loggedBlogsPart5User')
-    setUser(null)
+    dispatch(userLogOut())
   }
 
   const blogFormRef = useRef()
