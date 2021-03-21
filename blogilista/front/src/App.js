@@ -1,12 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Switch, Route, useRouteMatch, Link } from "react-router-dom";
+import {
+  Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  TextField,
+  Button,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  makeStyles,
+} from "@material-ui/core";
 
-import Blog from "./components/Blog";
+//import Blog from "./components/Blog";
 import Toggable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import Users from "./components/Users";
-import BlogPage from './components/BlogPage'
+import BlogPage from "./components/BlogPage";
 
 import {
   initializeBlogs,
@@ -39,9 +55,10 @@ const App = () => {
     dispatch(initializeUser());
   }, [dispatch]);
 
-
   const match = useRouteMatch("/blogs/:id");
-  let selected_blog = match ? blogs.find(blog => blog.id === match.params.id) : null;
+  let selected_blog = match
+    ? blogs.find((blog) => blog.id === match.params.id)
+    : null;
   //console.log(selected_blog)
 
   const handleLogin = (event) => {
@@ -110,35 +127,48 @@ const App = () => {
 
   if (user === null)
     return (
-      <div>
+      <Container>
         <h2>log in to application</h2>
         <Notification message={errorMessage} />
+
         <form id="loginForm" onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              type="text"
+          <div className="login-input">
+            <TextField
               id="username"
-              value={username}
-              name="Username"
+              type="text"
+              label="Username"
+              defaultValue="Username"
+              variant="outlined"
+              InputLabelProps={{
+                shrink: true,
+              }}
               onChange={(event) => setUsername(event.target.value)}
             />
           </div>
-          <div>
-            password
-            <input
-              type="password"
+
+          <div className="login-input">
+            <TextField
               id="password"
-              value={password}
-              name="Password"
+              type="password"
+              label="Password"
+              defaultValue="Password"
+              variant="outlined"
+              InputLabelProps={{
+                shrink: true,
+              }}
               onChange={(event) => setPassword(event.target.value)}
             />
           </div>
-          <button id="login-button" type="submit">
+          <Button
+            variant="contained"
+            color="primary"
+            id="login-button"
+            type="submit"
+          >
             login
-          </button>
+          </Button>
         </form>
-      </div>
+      </Container>
     );
 
   const sorted_blogs = blogs.sort((a, b) => {
@@ -149,42 +179,75 @@ const App = () => {
     }
     return 0;
   });
-
+  
   return (
-    <main>
-      <Notification message={errorMessage} />
-      <nav>
-        <Link to="/">blogs </Link>
-        <Link to="/users/">users </Link>
-        {user.name} logged in <button onClick={logOut}>logout</button>
-      </nav>
+    <Container>
+      <main style={{ marginTop: "2px", flexGrow: 1 }}>
+        <Notification message={errorMessage} />
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              arial-label="menu"
+            ></IconButton>
+            <Button color="inherit">
+              <Link to="/">blogs </Link>
+            </Button>
+            <Button color="inherit">
+              <Link to="/users/">users </Link>
+            </Button>
+            <Typography
+              style={{
+                flexGrow: '1',
+                textAlign: 'right'
+              }}
+            >
+              {user.name} logged in{" "}
+            </Typography>
+            <Button onClick={logOut}>logout</Button>
+          </Toolbar>
+        </AppBar>
 
-      <Switch>
-        <Route path="/blogs/:id">
-          <BlogPage blog={selected_blog} />
-        </Route>
-        <Route path="/users">
-          <Users />
-        </Route>
-        <Route path="/">
-          <div>
-            {blogForm()}
+        <Switch>
+          <Route path="/blogs/:id">
+            <BlogPage blog={selected_blog} />
+          </Route>
+          <Route path="/users">
+            <Users />
+          </Route>
+          <Route path="/">
+            <main>
+              {blogForm()}
 
-            <div className="content-blogs">
-              {sorted_blogs.map((blog) => (
-                <Blog
-                  key={blog.id}
-                  blog={blog}
-                  user={user}
-                  handleLike={handleBlogLike}
-                  handleRemoveBlog={handleRemoveBlog}
-                />
-              ))}
-            </div>
-          </div>
-        </Route>
-      </Switch>
-    </main>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableBody>
+                    {sorted_blogs.map((blog) => (
+                      <TableRow key={blog.id}>
+                        <TableCell>
+                          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                        </TableCell>
+                        <TableCell>{blog.author}</TableCell>
+                      </TableRow>
+                      /*
+                      <Blog
+                        key={blog.id}
+                        blog={blog}
+                        user={user}
+                        handleLike={handleBlogLike}
+                        handleRemoveBlog={handleRemoveBlog}
+                      />
+                      */
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </main>
+          </Route>
+        </Switch>
+      </main>
+    </Container>
   );
 };
 

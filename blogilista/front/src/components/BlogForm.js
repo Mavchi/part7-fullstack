@@ -1,4 +1,8 @@
 import React, { useState } from 'react'
+import {
+  Button
+} from '@material-ui/core/'
+
 import PropTypes from 'prop-types'
 
 const BlogForm = ({ createBlog }) => {
@@ -51,7 +55,7 @@ const BlogForm = ({ createBlog }) => {
             onChange={(event) => setUrl(event.target.value)}
           />
         </div>
-        <button id='create-blog-button' type='submit'>create</button>
+        <Button id='create-blog-button' type='submit'>create</Button>
       </form>
     </div>
   )

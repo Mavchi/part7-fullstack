@@ -43,9 +43,7 @@ h1 {
   margin-bottom: 10px;
 }
 
-nav {
-  display: block;
-  width: 98%;
-  margin: 0 auto;
-  background-color: rgb(163, 140, 140);
+.login-input {
+  margin-top: 4px;
 }
+
