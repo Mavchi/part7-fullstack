@@ -159,7 +159,6 @@ const App = () => {
         {user.name} logged in <button onClick={logOut}>logout</button>
       </nav>
 
-      <h2>blogs</h2>
       <Switch>
         <Route path="/blogs/:id">
           <BlogPage blog={selected_blog} />

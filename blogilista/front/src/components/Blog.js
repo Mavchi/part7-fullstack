@@ -41,9 +41,11 @@ const Blog = ({ blog, user, handleLike, handleRemoveBlog }) => {
       <Link to={`/blogs/${blog.id}`}>
         {blog.title} by {blog.author}
       </Link>
+      {/*
       <button className="blog-show-button" onClick={toggleVisibility}>
         show
       </button>
+      */}
       <br />
     </div>
   );

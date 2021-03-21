@@ -19,6 +19,7 @@ export const initializeUser = () => {
         if (loggedUserJSON) {
             user = JSON.parse(loggedUserJSON)
             blogServices.setToken(user.token)
+            console.log(user.token)
         }
         dispatch({
           type: "INIT_USER",
