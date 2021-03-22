@@ -9,16 +9,13 @@ import {
   TableContainer,
   TableRow,
   Paper,
-  TextField,
-  Button,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  makeStyles,
+  CssBaseline,
 } from "@material-ui/core";
 
 //import Blog from "./components/Blog";
+import MainMenu from './components/MainMenu'
+import Notification from './components/Notification'
+import Login from './components/Login'
 import Toggable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import Users from "./components/Users";
@@ -27,23 +24,12 @@ import BlogPage from "./components/BlogPage";
 import {
   initializeBlogs,
   createBlog,
-  likeBlog,
-  deleteBlog,
 } from "./reducers/blogReducer";
-import { initializeUser, userLogin, userLogOut } from "./reducers/userReducer";
-
-const Notification = ({ message }) => {
-  if (message === null) {
-    return null;
-  }
-
-  return <div className={message.type}>{message.txt}</div>;
-};
+import { initializeUser } from "./reducers/userReducer";
+import { setMessage } from './reducers/messageReducer'
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
 
   const blogs = useSelector((state) => state.blogs);
   let user = useSelector((state) => state.user);
@@ -53,6 +39,7 @@ const App = () => {
   useEffect(() => {
     dispatch(initializeBlogs());
     dispatch(initializeUser());
+    dispatch(setMessage({type: 'success', txt: 'Successfully logged in'}))
   }, [dispatch]);
 
   const match = useRouteMatch("/blogs/:id");
@@ -60,24 +47,6 @@ const App = () => {
     ? blogs.find((blog) => blog.id === match.params.id)
     : null;
   //console.log(selected_blog)
-
-  const handleLogin = (event) => {
-    event.preventDefault();
-    dispatch(userLogin({ username, password }));
-    if (user) {
-      setUsername("");
-      setPassword("");
-    } else {
-      setErrorMessage({ type: "error", txt: "wrong username or password" });
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
-    }
-  };
-
-  const logOut = () => {
-    dispatch(userLogOut());
-  };
 
   const blogFormRef = useRef();
   const addBlog = async (blogObject) => {
@@ -109,66 +78,9 @@ const App = () => {
     );
   };
 
-  const handleBlogLike = (blog) => {
-    return () => dispatch(likeBlog(blog));
-  };
-
-  const handleRemoveBlog = (blog) => {
-    return async () => {
-      try {
-        if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-          dispatch(deleteBlog(blog));
-        }
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-  };
-
   if (user === null)
     return (
-      <Container>
-        <h2>log in to application</h2>
-        <Notification message={errorMessage} />
-
-        <form id="loginForm" onSubmit={handleLogin}>
-          <div className="login-input">
-            <TextField
-              id="username"
-              type="text"
-              label="Username"
-              defaultValue="Username"
-              variant="outlined"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={(event) => setUsername(event.target.value)}
-            />
-          </div>
-
-          <div className="login-input">
-            <TextField
-              id="password"
-              type="password"
-              label="Password"
-              defaultValue="Password"
-              variant="outlined"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </div>
-          <Button
-            variant="contained"
-            color="primary"
-            id="login-button"
-            type="submit"
-          >
-            login
-          </Button>
-        </form>
-      </Container>
+      <Login />
     );
 
   const sorted_blogs = blogs.sort((a, b) => {
@@ -182,33 +94,12 @@ const App = () => {
   
   return (
     <Container>
-      <main style={{ marginTop: "2px", flexGrow: 1 }}>
-        <Notification message={errorMessage} />
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              arial-label="menu"
-            ></IconButton>
-            <Button color="inherit">
-              <Link to="/">blogs </Link>
-            </Button>
-            <Button color="inherit">
-              <Link to="/users/">users </Link>
-            </Button>
-            <Typography
-              style={{
-                flexGrow: '1',
-                textAlign: 'right'
-              }}
-            >
-              {user.name} logged in{" "}
-            </Typography>
-            <Button onClick={logOut}>logout</Button>
-          </Toolbar>
-        </AppBar>
+      <CssBaseline />
 
+      <Notification />
+      <MainMenu />
+
+      <main style={{ marginTop: "2px", flexGrow: 1 }}>
         <Switch>
           <Route path="/blogs/:id">
             <BlogPage blog={selected_blog} />
@@ -252,3 +143,9 @@ const App = () => {
 };
 
 export default App;
+
+/*
+to-do
+- login error not corrects
+
+*/
